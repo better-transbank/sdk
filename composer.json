@@ -1,0 +1,47 @@
+{
+    "name": "better-transbank/sdk",
+    "description": "A better implementation of Transbank's SOAP services",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matias Navarro Carter",
+            "email": "mnavarrocarter@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "ext-soap": "*",
+        "ext-dom": "*",
+        "ext-openssl": "*",
+        "psr/log": "^1.1",
+        "psr/event-dispatcher": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5",
+        "vimeo/psalm": "^3.8",
+        "friendsofphp/php-cs-fixer": "^2.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "BetterTransbank\\SDK\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BetterTransbank\\SDK\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "lint": "php-cs-fixer fix --ansi",
+        "test:types": "psalm",
+        "test:unit": "phpunit --coverage-clover build/coverage.xml --coverage-html build/coverage",
+        "test:style": "php-cs-fixer fix --dry-run -vvv --ansi",
+        "test": [
+            "@test:types",
+            "@test:unit",
+            "@test:style"
+        ]
+    }
+}

@@ -6,6 +6,10 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
  
 ## [Unreleased]
 
+### Changed
+- `Certificate` and `PrivateKey` classes now open the file instantiation to save I/O.
+- Renamed method on `ReadableFileTrait` to open the certificate
+
 ## [0.1.0] - 2020-01-08
  
 ### Added

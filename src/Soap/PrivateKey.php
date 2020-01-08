@@ -21,9 +21,10 @@ class PrivateKey
     use ReadableFileTrait;
 
     /**
+     * The opened private key
      * @var string
      */
-    private $privateKeyFile;
+    private $privateKey;
 
     /**
      * PrivateKey constructor.
@@ -32,7 +33,7 @@ class PrivateKey
      */
     public function __construct(string $privateKeyFile)
     {
-        $this->privateKeyFile = $this->ensureReadableFile($privateKeyFile);
+        $this->privateKey = $this->ensureReadableAndOpen($privateKeyFile);
     }
 
     /**
@@ -43,7 +44,7 @@ class PrivateKey
      */
     public function sign(string $data, int $algorithm = OPENSSL_ALGO_SHA1): string
     {
-        $key = openssl_pkey_get_private(file_get_contents($this->privateKeyFile));
+        $key = openssl_pkey_get_private($this->privateKey);
         if (!openssl_sign($data, $signature, $key, $algorithm)) {
             throw new RuntimeException('Signature failed');
         }

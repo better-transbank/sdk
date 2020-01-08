@@ -13,6 +13,7 @@ namespace BetterTransbank\SDK\Soap;
 
 /**
  * Trait ReadableFileTrait.
+ * @internal
  */
 trait ReadableFileTrait
 {
@@ -23,13 +24,13 @@ trait ReadableFileTrait
      *
      * @throws CertificateFileException
      */
-    private function ensureReadableFile(string $filename): string
+    private function ensureReadableAndOpen(string $filename): string
     {
         $filename = realpath($filename);
         if (!is_file($filename) && !is_readable($filename)) {
             throw new CertificateFileException($filename);
         }
 
-        return $filename;
+        return file_get_contents($filename);
     }
 }

@@ -21,11 +21,11 @@ class Certificate
     /**
      * @var string
      */
-    private $certificateFile;
+    private $certificate;
     /**
-     * @var array|null
+     * @var array
      */
-    private $certDataCache;
+    private $certData;
 
     /**
      * Certificate constructor.
@@ -34,47 +34,46 @@ class Certificate
      */
     public function __construct(string $certificateFile)
     {
-        $this->certificateFile = $this->ensureReadableFile($certificateFile);
-        $this->cacheCertData();
+        $this->certificate = $this->ensureReadableAndOpen($certificateFile);
+        $this->certData = $this->parseCertData();
     }
 
     public function getIssuerName(): string
     {
-        return trim(str_replace('/', ',', $this->certDataCache['name']), ',');
+        return trim(str_replace('/', ',', $this->certData['name']), ',');
     }
 
     public function getSerialNumber(): string
     {
-        return $this->certDataCache['serialNumber'];
+        return $this->certData['serialNumber'];
     }
 
     public function getSubjectCN(): string
     {
-        return $this->certDataCache['subject']['CN'];
+        return $this->certData['subject']['CN'];
     }
 
     public function getBinaryBase64(): string
     {
-        $string = file_get_contents($this->certificateFile);
-
         return str_replace([
             '-----BEGIN CERTIFICATE-----',
             '-----END CERTIFICATE-----',
             "\n",
             "\r",
             ' ',
-        ], '', $string);
+        ], '', $this->certificate);
     }
 
     public function isExpired(): bool
     {
-        return time() > $this->certDataCache['validTo_time_t'];
+        return time() > $this->certData['validTo_time_t'];
     }
 
-    private function cacheCertData(): void
+    /**
+     * @return array
+     */
+    private function parseCertData(): array
     {
-        if (null === $this->certDataCache) {
-            $this->certDataCache = openssl_x509_parse(file_get_contents($this->certificateFile));
-        }
+        return openssl_x509_parse($this->certificate);
     }
 }

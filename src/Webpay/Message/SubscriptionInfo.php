@@ -1,14 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
+/*
+ * This file is part of the BetterTransbank\SDK project.
+ * (c) Matías Navarro-Carter <mnavarrocarter@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace BetterTransbank\SDK\Webpay\Message;
 
 use DateTimeImmutable;
 
 /**
- * Class SubscriptionInfo
- * @package BetterTransbank\SDK\Webpay\Message
+ * Class SubscriptionInfo.
  */
 final class SubscriptionInfo
 {
@@ -55,16 +61,17 @@ final class SubscriptionInfo
 
     /**
      * SubscriptionInfo constructor.
-     * @param string $serviceId
-     * @param string $cardHolderId
-     * @param string $cardHolderName
-     * @param string $cardHolderLastName1
-     * @param string $cardHolderLastName2
-     * @param string $cardHolderMail
-     * @param string $cellPhoneNumber
+     *
+     * @param string            $serviceId
+     * @param string            $cardHolderId
+     * @param string            $cardHolderName
+     * @param string            $cardHolderLastName1
+     * @param string            $cardHolderLastName2
+     * @param string            $cardHolderMail
+     * @param string            $cellPhoneNumber
      * @param DateTimeImmutable $expirationDate
-     * @param string $commerceMail
-     * @param bool $uf
+     * @param string            $commerceMail
+     * @param bool              $uf
      */
     public function __construct(
         string $serviceId,

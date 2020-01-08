@@ -13,6 +13,7 @@ namespace BetterTransbank\SDK\Soap;
 
 /**
  * Trait ReadableFileTrait.
+ *
  * @internal
  */
 trait ReadableFileTrait

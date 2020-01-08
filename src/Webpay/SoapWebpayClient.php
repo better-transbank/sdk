@@ -20,7 +20,6 @@ use BetterTransbank\SDK\Webpay\Message\SubscriptionInfo;
 use BetterTransbank\SDK\Webpay\Message\Transaction;
 use BetterTransbank\SDK\Webpay\Message\TransactionResult;
 use DateTimeImmutable;
-use SoapFault;
 
 /**
  * Class SoapWebpayClient.
@@ -34,6 +33,7 @@ final class SoapWebpayClient implements WebpayClient
 
     /**
      * @param Credentials $credentials
+     *
      * @return WebpayClient
      */
     public static function fromCredentials(Credentials $credentials): WebpayClient
@@ -80,7 +80,7 @@ final class SoapWebpayClient implements WebpayClient
                 'cellPhoneNumber' => $subInfo->getCellPhoneNumber(),
                 'expirationDate' => $subInfo->getExpirationDate()->format('Y-m-d'),
                 'commerceMail' => $subInfo->getCommerceMail(),
-                'ufFlag' => $subInfo->isUf()
+                'ufFlag' => $subInfo->isUf(),
             ];
         }
 

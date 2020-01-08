@@ -42,7 +42,7 @@ class TransbankSoapClient extends SoapClient
      */
     public function __construct(Credentials $credentials)
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
+        /* @noinspection PhpUnhandledExceptionInspection */
         parent::__construct($credentials->wsdl(), [
             'exceptions' => true,
             'trace' => true,
@@ -95,8 +95,6 @@ class TransbankSoapClient extends SoapClient
 
     /**
      * @param DOMDocument $dom
-     *
-     * @return void
      *
      * @throws Exception
      */

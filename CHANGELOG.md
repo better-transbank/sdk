@@ -4,7 +4,9 @@ Todos los cambios notables en este proyecto están documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2.0.0.html).
  
-## [Unreleased]
+## [Unreleased] 
+
+## [0.2.0] - 2020-01-08
 
 ### Added
 - Webpay Plus Pat Pass
@@ -32,5 +34,6 @@ ahorrar I/O en las operaciones.
 - Añadido el cliente SOAP con Logger
 - Añadido Webpay decorado con Event Dispatcher
  
-[Unreleased]: https://github.com/better-transbank/sdk/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/better-transbank/sdk/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/better-transbank/sdk/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/better-transbank/sdk/compare/releases/tag/0.1.0

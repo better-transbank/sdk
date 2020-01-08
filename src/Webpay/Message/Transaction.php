@@ -43,7 +43,8 @@ final class Transaction
      */
     private $identifier;
     /**
-     * Patpass subscription info
+     * Patpass subscription info.
+     *
      * @var SubscriptionInfo|null
      */
     private $subscriptionInfo;
@@ -154,6 +155,7 @@ final class Transaction
 
     /**
      * @param SubscriptionInfo $subscriptionInfo
+     *
      * @return $this
      */
     public function makeTypePatPass(SubscriptionInfo $subscriptionInfo): self
@@ -161,16 +163,17 @@ final class Transaction
         $cloned = clone $this;
         $cloned->transactionType = TransactionType::PAT_PASS;
         $cloned->subscriptionInfo = $subscriptionInfo;
+
         return $cloned;
     }
 
     /**
      * @param string $identifier
-     * @param int $amount
+     * @param int    $amount
      * @param string $commerceCode
+     * @param int    $instalments
+     * @param float  $instalmentsAmount
      *
-     * @param int $instalments
-     * @param float $instalmentsAmount
      * @return $this
      */
     public function withAddedDetails(string $identifier, int $amount, string $commerceCode, int $instalments = 0, float $instalmentsAmount = 0): self
@@ -181,7 +184,7 @@ final class Transaction
             'amount' => $amount,
             'commerceCode' => $commerceCode,
             'sharesNumber' => $instalments,
-            'sharesAmount' => $instalmentsAmount
+            'sharesAmount' => $instalmentsAmount,
         ];
 
         return $cloned;
@@ -191,6 +194,7 @@ final class Transaction
     {
         $cloned = clone $this;
         $cloned->sessionId = $sessionId;
+
         return $cloned;
     }
 

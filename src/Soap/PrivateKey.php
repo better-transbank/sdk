@@ -21,7 +21,8 @@ class PrivateKey
     use ReadableFileTrait;
 
     /**
-     * The opened private key
+     * The opened private key.
+     *
      * @var string
      */
     private $privateKey;

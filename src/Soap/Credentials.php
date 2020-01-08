@@ -41,6 +41,7 @@ class Credentials
      * @param string $publicCertFile
      * @param string $transbankCertFile
      * @param string $wsdl
+     *
      * @return static
      */
     public static function fromFilesPath(string $privateKeyFile, string $publicCertFile, string $transbankCertFile, string $wsdl): self

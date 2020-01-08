@@ -43,6 +43,11 @@ final class Transaction
      */
     private $identifier;
     /**
+     * Patpass subscription info
+     * @var SubscriptionInfo|null
+     */
+    private $subscriptionInfo;
+    /**
      * @var array
      */
     private $details;
@@ -148,13 +153,14 @@ final class Transaction
     }
 
     /**
+     * @param SubscriptionInfo $subscriptionInfo
      * @return $this
      */
-    public function makeTypePatPass(): self
+    public function makeTypePatPass(SubscriptionInfo $subscriptionInfo): self
     {
         $cloned = clone $this;
         $cloned->transactionType = TransactionType::PAT_PASS;
-
+        $cloned->subscriptionInfo = $subscriptionInfo;
         return $cloned;
     }
 
@@ -202,5 +208,13 @@ final class Transaction
     public function getDetails(): array
     {
         return $this->details;
+    }
+
+    /**
+     * @return SubscriptionInfo|null
+     */
+    public function getSubscriptionInfo(): ?SubscriptionInfo
+    {
+        return $this->subscriptionInfo;
     }
 }

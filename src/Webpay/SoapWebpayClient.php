@@ -16,6 +16,7 @@ use BetterTransbank\SDK\Soap\TransbankSoapClient;
 use BetterTransbank\SDK\Webpay\Message\CardDetails;
 use BetterTransbank\SDK\Webpay\Message\Detail;
 use BetterTransbank\SDK\Webpay\Message\StartTransactionResponse;
+use BetterTransbank\SDK\Webpay\Message\SubscriptionInfo;
 use BetterTransbank\SDK\Webpay\Message\Transaction;
 use BetterTransbank\SDK\Webpay\Message\TransactionResult;
 use DateTimeImmutable;
@@ -66,6 +67,23 @@ final class SoapWebpayClient implements WebpayClient
                 'transactionDetails' => $transaction->getDetails(),
             ],
         ];
+
+        $subInfo = $transaction->getSubscriptionInfo();
+        if ($subInfo instanceof SubscriptionInfo) {
+            $payload['wsInitTransactionInput']['wPMDetail'] = [
+                'serviceId' => $subInfo->getServiceId(),
+                'cardHolderId' => $subInfo->getCardHolderId(),
+                'cardHolderName' => $subInfo->getCardHolderName(),
+                'cardHolderLastName1' => $subInfo->getCardHolderLastName1(),
+                'cardHolderLastName2' => $subInfo->getCardHolderLastName2(),
+                'cardHolderMail' => $subInfo->getCardHolderMail(),
+                'cellPhoneNumber' => $subInfo->getCellPhoneNumber(),
+                'expirationDate' => $subInfo->getExpirationDate()->format('Y-m-d'),
+                'commerceMail' => $subInfo->getCommerceMail(),
+                'ufFlag' => $subInfo->isUf()
+            ];
+        }
+
         /** @noinspection PhpUndefinedMethodInspection */
         $response = $this->client->initTransaction($payload);
 

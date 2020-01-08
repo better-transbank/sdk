@@ -6,6 +6,10 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
  
 ## [Unreleased]
 
+### Added
+- Webpay Plus Pat Pass
+- Ejemplos extra del SDK para Webpay Normal en todos sus modos (Normal, Mall y PatPass)
+
 ### Changed
 - Las clases `Certificate` y `PrivateKey` ahora abren los archivos al momento de instanciación, para
 ahorrar I/O en las operaciones.

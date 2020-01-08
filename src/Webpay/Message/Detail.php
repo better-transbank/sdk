@@ -14,7 +14,7 @@ namespace BetterTransbank\SDK\Webpay\Message;
 /**
  * Class Detail.
  */
-class Detail
+final class Detail
 {
     /**
      * @var string

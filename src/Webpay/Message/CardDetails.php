@@ -14,7 +14,7 @@ namespace BetterTransbank\SDK\Webpay\Message;
 /**
  * Class CardDetails.
  */
-class CardDetails
+final class CardDetails
 {
     /**
      * Últimos cuatro dígitos de la tarjeta.

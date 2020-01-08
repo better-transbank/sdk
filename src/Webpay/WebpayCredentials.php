@@ -27,6 +27,9 @@ final class WebpayCredentials extends Credentials
     protected const MALL_STAGING_KEY = __DIR__.'/../../cert/webpay-plus-mall-integration/597044444401.key';
     protected const MALL_STAGING_CERT = __DIR__.'/../../cert/webpay-plus-mall-integration/597044444401.crt';
 
+    protected const PATPASS_STAGING_KEY = __DIR__.'/../../cert/webpay-patpass-integration/597044444432.key';
+    protected const PATPASS_STAGING_CERT = __DIR__.'/../../cert/webpay-patpass-integration/597044444432.crt';
+
     /**
      * @return static
      */
@@ -48,6 +51,19 @@ final class WebpayCredentials extends Credentials
         return self::fromFilesPath(
             self::MALL_STAGING_KEY,
             self::MALL_STAGING_CERT,
+            self::STAGING_TRANSBANK_CERT,
+            self::STAGING_WSDL
+        );
+    }
+
+    /**
+     * @return static
+     */
+    public static function patPassStaging(): self
+    {
+        return self::fromFilesPath(
+            self::PATPASS_STAGING_KEY,
+            self::PATPASS_STAGING_CERT,
             self::STAGING_TRANSBANK_CERT,
             self::STAGING_WSDL
         );

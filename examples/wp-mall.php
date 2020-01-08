@@ -11,14 +11,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // This example shows how you can use the sdk in a CGI single-script context.
 // You can run this example with PHP built-in web server:
-// php -S 0.0.0.0:8000 -t examples/ examples/cgi.php
+// php -S 0.0.0.0:8000 -t examples/ examples/wp-normal.php
 
-$cred = WebpayCredentials::normalStaging();
+$cred = WebpayCredentials::mallStaging();
 $webpay = SoapWebpayClient::fromCredentials($cred);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Los codigos de comercio de WebpayMall los puedes ver aquí:
+    // https://www.transbankdevelopers.cl/documentacion/como_empezar#ambientes
     $transaction = Transaction::create('http://localhost:8000/return', 'http://localhost:8000/final')
-        ->withAddedDetails('12345', 10000, $cred->publicCert()->getSubjectCN());
+        ->makeTypeMall('597044444401', 'MainOrder1234')
+        ->withAddedDetails('SubOrder1', 10000, '597044444402')
+        ->withAddedDetails('SubOrder2', 14000, '597044444403');
     $response = $webpay->startTransaction($transaction);
     PaymentForm::prepare($response)->send();
     exit;

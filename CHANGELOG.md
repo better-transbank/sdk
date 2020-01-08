@@ -7,8 +7,14 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Changed
-- `Certificate` and `PrivateKey` classes now open the file instantiation to save I/O.
-- Renamed method on `ReadableFileTrait` to open the certificate
+- Las clases `Certificate` y `PrivateKey` ahora abren los archivos al momento de instanciación, para
+ahorrar I/O en las operaciones.
+
+### Deprecated
+- El signature del constructor de la clase `Credentials` ha sido deprecado. A partir de 1.0.0 ya
+ no soportará nombres de archivo como parámetros, sino las instancias `Certificate` y `PrivateKey`. Como
+ reemplazo para instanciación a través de nombres de archivo, se disponibiliza el método estático
+ `Credentials::fromFilesPath()`.
 
 ## [0.1.0] - 2020-01-08
  

@@ -63,6 +63,13 @@ donde también explico todo el proceso de desarrollo en detalle.
 con un poco de funcionalidad extra sobre la misma lógica del SDK oficial. Esta, en cambio, es una implementación
 desde cero.
 
+## Productos Implementados
+- [x] Webpay Plus (Normal, Mall y PatPass)
+- [ ] Webpay Plus Captura Diferida
+- [ ] Webpay Plus Anulación
+- [ ] Webpay OneClick (Normal y Mall)
+- [ ] OnePay
+
 ## Documentación
 Puedes leer la documentación detallada [aquí](docs/README.md)
 

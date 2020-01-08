@@ -37,6 +37,19 @@ class Credentials
     private $wsdl;
 
     /**
+     * @param string $privateKeyFile
+     * @param string $publicCertFile
+     * @param string $transbankCertFile
+     * @param string $wsdl
+     * @return static
+     */
+    public static function fromFilesPath(string $privateKeyFile, string $publicCertFile, string $transbankCertFile, string $wsdl): self
+    {
+        // TODO: Change this in 1.0.0
+        return new self($privateKeyFile, $publicCertFile, $transbankCertFile, $wsdl);
+    }
+
+    /**
      * Credentials constructor.
      *
      * @param string $privateKey
@@ -45,6 +58,12 @@ class Credentials
      * @param string $wsdl
      *
      * @throws CertificateFileException
+     *
+     * @deprecated  This signature will be deprecated from 1.0.0 to use the
+     *              PrivateKey and Certificate classes. Instead, you must use
+     *              the new Credentials::fromFilesPath() static method
+     *
+     * TODO: On 1.0.0 change the signature to receive types and create a factory from files
      */
     public function __construct(string $privateKey, string $publicCert, string $transbankCert, string $wsdl)
     {

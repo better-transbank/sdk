@@ -32,7 +32,7 @@ final class WebpayCredentials extends Credentials
      */
     public static function normalStaging(): self
     {
-        return new self(
+        return self::fromFilesPath(
             self::NORMAL_STAGING_KEY,
             self::NORMAL_STAGING_CERT,
             self::STAGING_TRANSBANK_CERT,
@@ -45,7 +45,7 @@ final class WebpayCredentials extends Credentials
      */
     public static function mallStaging(): self
     {
-        return new self(
+        return self::fromFilesPath(
             self::MALL_STAGING_KEY,
             self::MALL_STAGING_CERT,
             self::STAGING_TRANSBANK_CERT,
@@ -61,7 +61,7 @@ final class WebpayCredentials extends Credentials
      */
     public static function production(string $privateKey, string $publicCert): self
     {
-        return new self(
+        return self::fromFilesPath(
             $privateKey,
             $publicCert,
             self::PRODUCTION_TRANSBANK_CERT,

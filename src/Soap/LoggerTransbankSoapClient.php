@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Soap;
 
-use DOMDocument;
+use BetterTransbank\SDK\Soap\WSSE\InvalidResponseSignature;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -53,14 +53,29 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
                 'errorMessage' => $exception->getMessage(),
             ]);
             throw $exception;
+        } catch (InvalidResponseSignature $exception) {
+            $this->logger->critical('Response signature is invalid. Possible man-in-the-middle attack.', [
+                'reason' => $exception->getMessage()
+            ]);
+            throw $exception;
         }
     }
 
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    /**
+     * @param string $request
+     * @param string $location
+     * @param string $action
+     * @param int $version
+     * @param int $one_way
+     * @return string
+     * @noinspection PhpDocMissingThrowsInspection
+     */
+    public function __doRequest($request, $location, $action, $version, $one_way = 0): string
     {
         $this->logger->debug('Sending request to Transbank', [
             'location' => $location,
         ]);
+        /** @noinspection PhpUnhandledExceptionInspection */
         $response = parent::__doRequest($request, $location, $action, $version, $one_way);
         $this->logger->debug('XML response received', [
             'responseXml' => $response,
@@ -70,18 +85,27 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
     }
 
     /**
-     * @param DOMDocument $dom
+     * @param string $xml
+     * @return string
      * @noinspection PhpDocMissingThrowsInspection
      */
-    protected function signXmlDocument(DOMDocument $dom): void
+    protected function signDocument(string $xml): string
     {
-        $originalXml = $dom->saveXML();
         /* @noinspection PhpUnhandledExceptionInspection */
-        parent::signXmlDocument($dom);
-        $signedXml = $dom->saveXML();
+        $signedXml = parent::signDocument($xml);
         $this->logger->debug('XML body has been signed', [
-            'originalXml' => $originalXml,
-            'signedXml' => $signedXml,
+            'originalXml' => $xml,
+            'signedXml' => $signedXml
         ]);
+        return $signedXml;
+    }
+
+    /**
+     * @param string $xml
+     */
+    protected function verifyDocument(string $xml): void
+    {
+        parent::verifyDocument($xml);
+        $this->logger->debug('XML response has been validated');
     }
 }

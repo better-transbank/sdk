@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Soap;
 
+use RuntimeException;
+
 /**
  * Class Certificate.
  */
@@ -41,6 +43,24 @@ class Certificate
     public function getIssuerName(): string
     {
         return trim(str_replace('/', ',', $this->certData['name']), ',');
+    }
+
+    /**
+     * @param string $data
+     * @param string $signature
+     * @param int $algo
+     */
+    public function verifySignature(string $data, string $signature, int $algo = OPENSSL_ALGO_SHA1): void
+    {
+        $key = openssl_x509_read($this->certificate);
+        $result = openssl_verify($data, $signature, $key, $algo);
+        openssl_x509_free($key);
+        if ($result === 0) {
+            throw new RuntimeException('Invalid signature');
+        }
+        if ($result === false || $result === -1) {
+            throw new RuntimeException('Error validating signature');
+        }
     }
 
     public function getSerialNumber(): string

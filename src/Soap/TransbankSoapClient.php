@@ -11,11 +11,7 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Soap;
 
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use Exception;
-use RuntimeException;
 use SoapClient;
 use SoapFault;
 
@@ -24,11 +20,6 @@ use SoapFault;
  */
 class TransbankSoapClient extends SoapClient
 {
-    private const SOAP_NS = 'http://schemas.xmlsoap.org/soap/envelope/';
-    private const WSU_NS = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd';
-    private const WSSE_NS = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
-    private const DS_NS = 'http://www.w3.org/2000/09/xmldsig#';
-
     /**
      * @var Credentials
      */
@@ -79,126 +70,41 @@ class TransbankSoapClient extends SoapClient
      * @param int    $version
      * @param int    $one_way
      *
-     * @return string|void
+     * @return string
      *
      * @throws Exception
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    public function __doRequest($request, $location, $action, $version, $one_way = 0): string
     {
-        $document = new DOMDocument();
-        $document->loadXML($request);
-        $this->signXmlDocument($document);
-        $response = parent::__doRequest($document->saveXML(), $location, $action, $version, $one_way);
-
+        $signedXml = $this->signDocument($request);
+        $response = parent::__doRequest($signedXml, $location, $action, $version, $one_way);
+        $this->verifyDocument($response);
         return $response;
     }
 
     /**
-     * @param DOMDocument $dom
-     *
+     * @param string $xml
+     * @return string
      * @throws Exception
      */
-    protected function signXmlDocument(DOMDocument $dom): void
+    protected function signDocument(string $xml): string
     {
-        $xp = new DOMXPath($dom);
-        $xp->registerNamespace('SOAP-ENV', self::SOAP_NS);
-
-        $refId = $this->uuid();
-
-        // Mark body node with ID for signing
-        $bodyNode = $xp->query('/SOAP-ENV:Envelope/SOAP-ENV:Body')->item(0);
-        $bodyNode->setAttributeNS(self::WSU_NS, 'wsu:Id', $refId);
-
-        // find or create SoapHeader node
-        $headerNode = $xp->query('/SOAP-ENV:Envelope/SOAP-ENV:Header')->item(0);
-        if (!$headerNode) {
-            $headerNode = $dom->documentElement->insertBefore($dom->createElementNS(self::SOAP_NS, 'SOAP-ENV:Header'), $bodyNode);
-        }
-
-        // Prepare security element
-        $secNode = $dom->createElementNS(self::WSSE_NS, 'wsse:Security');
-        $secNode->setAttribute('SOAP-ENV:mustUnderstand', '1');
-        $headerNode->appendChild($secNode);
-
-        // Add signature node
-        $signNode = $secNode->appendChild($dom->createElementNS(self::DS_NS, 'ds:Signature'));
-
-        // Add signature info to security element
-        $signedInfo = $signNode->appendChild($this->buildSignedInfo($dom, $refId));
-
-        // Now, we actually sign it
-        $signature = $this->credentials->privateKey()->sign($signedInfo->C14N(true, false));
-        $signNode->appendChild($dom->createElementNS(self::DS_NS, 'ds:SignatureValue', base64_encode($signature)));
-
-        // Add key info to security element
-        $signNode->appendChild($this->buildKeyInfo($dom));
+        $id = $this->uuid();
+        $document = new WSSE\RequestDocument($xml);
+        $document->markNodeWithWsuId($id);
+        $document->addSignedInfoReference($id);
+        $document->signDocument($this->credentials->privateKey());
+        $document->addKeyInfo($this->credentials->publicCert());
+        return $document->saveXML();
     }
 
     /**
-     * @param DOMDocument $dom
-     * @param string      $id
-     *
-     * @return DOMElement
+     * @param string $xml
      */
-    private function buildSignedInfo(DOMDocument $dom, string $id): DOMElement
+    protected function verifyDocument(string $xml): void
     {
-        $xp = new DOMXPath($dom);
-        $xp->registerNamespace('SOAP-ENV', self::SOAP_NS);
-        $xp->registerNamespace('wsu', self::WSU_NS);
-        $xp->registerNamespace('wsse', self::WSSE_NS);
-        $xp->registerNamespace('ds', self::DS_NS);
-
-        $signedInfo = $dom->createElementNS(self::DS_NS, 'ds:SignedInfo');
-
-        // canonization algorithm
-        $canonizationMethodNode = $signedInfo->appendChild($dom->createElementNS(self::DS_NS, 'ds:CanonicalizationMethod'));
-        $canonizationMethodNode->setAttribute('Algorithm', 'http://www.w3.org/2001/10/xml-exc-c14n#');
-
-        // signature algorithm
-        $signatureMethodNode = $signedInfo->appendChild($dom->createElementNS(self::DS_NS, 'ds:SignatureMethod'));
-        $signatureMethodNode->setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#rsa-sha1');
-
-        // Find the node id marked to be signed
-        $nodes = $xp->query("//*[(@wsu:Id='{$id}')]");
-        if (0 === $nodes->length) {
-            throw new RuntimeException('No Id for signature');
-        }
-
-        // We canonize the node using C14N standard
-        $canonized = $nodes->item(0)->C14N(true, false);
-
-        // create node Reference
-        $reference = $signedInfo->appendChild($dom->createElementNS(self::DS_NS, 'ds:Reference'));
-        $reference->setAttribute('URI', "#{$id}");
-        $transforms = $reference->appendChild($dom->createElementNS(self::DS_NS, 'ds:Transforms'));
-        $transform = $transforms->appendChild($dom->createElementNS(self::DS_NS, 'ds:Transform'));
-        // mark node as canonicalized
-        $transform->setAttribute('Algorithm', 'http://www.w3.org/2001/10/xml-exc-c14n#');
-        // and add a SHA1 digest
-        $method = $reference->appendChild($dom->createElementNS(self::DS_NS, 'ds:DigestMethod'));
-        $method->setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#sha1');
-
-        $digestValue = base64_encode(sha1($canonized, true));
-        $reference->appendChild($dom->createElementNS(self::DS_NS, 'ds:DigestValue', $digestValue));
-
-        return $signedInfo;
-    }
-
-    /**
-     * @param DOMDocument $dom
-     *
-     * @return DOMElement
-     */
-    private function buildKeyInfo(DOMDocument $dom): DOMElement
-    {
-        $keyInfo = $dom->createElementNS(self::DS_NS, 'ds:KeyInfo');
-        $secTokenRef = $keyInfo->appendChild($dom->createElement('wsse:SecurityTokenReference'));
-        $x509Data = $secTokenRef->appendChild($dom->createElementNS(self::DS_NS, 'ds:X509Data'));
-        $x509IssuerSerial = $x509Data->appendChild($dom->createElementNS(self::DS_NS, 'ds:X509IssuerSerial'));
-        $x509IssuerSerial->appendChild($dom->createElementNS(self::DS_NS, 'ds:X509IssuerName', $this->credentials->publicCert()->getIssuerName()));
-        $x509IssuerSerial->appendChild($dom->createElementNS(self::DS_NS, 'ds:X509SerialNumber', $this->credentials->publicCert()->getSerialNumber()));
-
-        return $keyInfo;
+        $document = new WSSE\ResponseDocument($xml);
+        $document->verifySignature($this->credentials->transbankCert());
     }
 
     /**
@@ -211,10 +117,8 @@ class TransbankSoapClient extends SoapClient
     private function uuid(string $prefix = 'pfx'): string
     {
         $data = random_bytes(16);
-
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-
         return $prefix.vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

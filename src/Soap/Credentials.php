@@ -46,7 +46,7 @@ class Credentials
     public static function fromFilesPath(string $privateKeyFile, string $publicCertFile, string $transbankCertFile, string $wsdl): self
     {
         // TODO: Change this in 1.0.0
-        return new self($privateKeyFile, $publicCertFile, $transbankCertFile, $wsdl);
+        return new static($privateKeyFile, $publicCertFile, $transbankCertFile, $wsdl);
     }
 
     /**

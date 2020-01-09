@@ -31,6 +31,9 @@ final class AuthResult
     public const INVALID = 'INV';
     public const OPERATIONAL_ERROR = 'EOP';
 
+    /**
+     * @var array<string,string>
+     */
     private static $codeToHumanReadableMap = [
         self::SUCCESS => 'Autenticación exitosa',
         self::FAILED => 'Autenticación fallida',

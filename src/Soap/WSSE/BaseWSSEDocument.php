@@ -14,6 +14,7 @@ namespace BetterTransbank\SDK\Soap\WSSE;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+use Generator;
 use Iterator;
 use RuntimeException;
 
@@ -70,7 +71,7 @@ abstract class BaseWSSEDocument extends DOMDocument
     /**
      * @param string $xPathNode
      *
-     * @return Iterator|DOMElement[]
+     * @return Generator<int, DOMElement, mixed, void>
      */
     protected function queryElements(string $xPathNode): Iterator
     {
@@ -91,6 +92,8 @@ abstract class BaseWSSEDocument extends DOMDocument
      */
     protected function getBodyNode(): DOMElement
     {
+        $nodes = $this->queryElements('asfasf');
+
         return $this->queryElement('/SOAP-ENV:Envelope/SOAP-ENV:Body');
     }
 }

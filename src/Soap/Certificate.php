@@ -58,7 +58,7 @@ class Certificate
         if (0 === $result) {
             throw new RuntimeException('Invalid signature');
         }
-        if (false === $result || -1 === $result) {
+        if (-1 === $result) {
             throw new RuntimeException('Error validating signature');
         }
     }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace BetterTransbank\SDK\Soap\WSSE;
 
 use BetterTransbank\SDK\Soap\Certificate;
+use DOMNode;
 use RuntimeException;
 
 /**
@@ -50,6 +51,7 @@ final class ResponseDocument extends BaseWSSEDocument
 
     private function compareReferenceDigestsToNodes(): void
     {
+        /* @var \DOMElement[] $elements */
         $elements = $this->queryElements('/soapenv:Envelope/soapenv:Header/wsse:Security/ds:Signature/ds:SignedInfo/ds:Reference');
         foreach ($elements as $element) {
             $id = trim($element->getAttribute('URI'), '#');
@@ -58,8 +60,21 @@ final class ResponseDocument extends BaseWSSEDocument
             $canon = $referencedNode->C14N(true, false);
             $replicatedDigest = base64_encode(sha1($canon, true));
 
-            if ($replicatedDigest !== $element->lastChild->nodeValue) {
-                throw new InvalidResponseSignature(sprintf('Calculated digest "%s" for node of id %s does not match the value in document "%s"', $replicatedDigest, $id, $element->lastChild->nodeValue));
+            // We search for the Digest Value node
+            $digestValue = null;
+            foreach ($element->childNodes as $node) {
+                /** @var DOMNode $node */
+                if ('ds:DigestValue' === $node->nodeName) {
+                    $digestValue = $node->nodeValue;
+                    break;
+                }
+            }
+            if (!is_string($digestValue)) {
+                throw new InvalidResponseSignature(sprintf('Could not found DigestValue for Referece id %s', $id));
+            }
+
+            if ($replicatedDigest !== $digestValue) {
+                throw new InvalidResponseSignature(sprintf('Calculated digest "%s" for node of id %s does not match the value in document "%s"', $replicatedDigest, $id, $digestValue));
             }
         }
     }
@@ -72,6 +87,7 @@ final class ResponseDocument extends BaseWSSEDocument
         $signedInfoEl = $this->queryElement('/soap:Envelope/soap:Header/wsse:Security/ds:Signature/ds:SignedInfo');
         $signatureValueEl = $this->queryElement('/soap:Envelope/soap:Header/wsse:Security/ds:Signature/ds:SignatureValue');
 
+        /** @psalm-suppress NullArgument */
         $canon = $signedInfoEl->C14N(true, false, null, ['soap']);
         $signature = base64_decode(trim($signatureValueEl->nodeValue));
         try {

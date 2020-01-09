@@ -39,6 +39,5 @@ jobs:
     - name: Unit test
       run: composer test:unit
 
-#   TODO: Type testing will be included later
-#    - name: Test types
-#      run: composer test:types
+    - name: Test types
+      run: composer test:types

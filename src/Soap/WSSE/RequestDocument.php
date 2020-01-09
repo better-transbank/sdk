@@ -14,6 +14,7 @@ namespace BetterTransbank\SDK\Soap\WSSE;
 use BetterTransbank\SDK\Soap\Certificate;
 use BetterTransbank\SDK\Soap\PrivateKey;
 use DOMElement;
+use DOMNode;
 use RuntimeException;
 
 /**
@@ -44,7 +45,10 @@ final class RequestDocument extends BaseWSSEDocument
         try {
             $headerNode = $this->queryElement('/SOAP-ENV:Envelope/SOAP-ENV:Header');
         } catch (NodeNotFound $exception) {
-            $headerNode = $this->documentElement->insertBefore(
+            if (!$this->firstChild instanceof DOMNode) {
+                throw new RuntimeException('The xml document is empty');
+            }
+            $headerNode = $this->firstChild->insertBefore(
                 $this->createElementNS(self::SOAP_NS, 'SOAP-ENV:Header'), $this->getBodyNode()
             );
         }

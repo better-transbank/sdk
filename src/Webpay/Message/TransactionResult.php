@@ -180,6 +180,9 @@ final class TransactionResult implements IteratorAggregate
     }
 
     /**
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     * @psalm-suppress MismatchingDocblockReturnType
+     *
      * @return Iterator|Detail[]
      */
     public function getIterator(): Iterator

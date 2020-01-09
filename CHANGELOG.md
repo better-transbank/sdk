@@ -6,6 +6,10 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## Added
+- Integración Continua de cambios en código, con pruebas unitarias y manejo de estilo
+- Psalm fue añadido al pipeline y ya no muestra errores de tipado en el código 
+
 ## [0.3.0] - 2020-01-09 
 
 ### Changed

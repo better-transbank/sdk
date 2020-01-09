@@ -54,13 +54,25 @@ class TransbankSoapClient extends SoapClient
         try {
             return parent::__call($function_name, $arguments);
         } catch (SoapFault $exception) {
-            $message = trim(str_replace(['<!--', '-->'], '', $exception->faultstring));
-            if (preg_match('/(\(\d{3}\))/', $message, $matches)) {
-                $message = str_replace($matches[1], '', $message);
-                throw new ClientException($message, (int) trim($matches[1], '()'));
-            }
-            throw new ClientException($message, 500);
+            throw $this->prepareClientException($exception);
         }
+    }
+
+    /**
+     * @param SoapFault $soapFault
+     *
+     * @return ClientException
+     */
+    protected function prepareClientException(SoapFault $soapFault): ClientException
+    {
+        $message = trim(str_replace(['<!--', '-->'], '', $soapFault->getMessage()));
+        if (preg_match('/(\(\d{1,3}\))/', $message, $matches)) {
+            $message = str_replace($matches[0], '', $message);
+
+            return new ClientException($message, (int) trim($matches[0], '()'));
+        }
+
+        return new ClientException($message, 500);
     }
 
     /**

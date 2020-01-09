@@ -55,7 +55,7 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
             throw $exception;
         } catch (InvalidResponseSignature $exception) {
             $this->logger->critical('Response signature is invalid. Possible man-in-the-middle attack.', [
-                'reason' => $exception->getMessage()
+                'reason' => $exception->getMessage(),
             ]);
             throw $exception;
         }
@@ -65,8 +65,9 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
      * @param string $request
      * @param string $location
      * @param string $action
-     * @param int $version
-     * @param int $one_way
+     * @param int    $version
+     * @param int    $one_way
+     *
      * @return string
      * @noinspection PhpDocMissingThrowsInspection
      */
@@ -86,6 +87,7 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
 
     /**
      * @param string $xml
+     *
      * @return string
      * @noinspection PhpDocMissingThrowsInspection
      */
@@ -95,8 +97,9 @@ class LoggerTransbankSoapClient extends TransbankSoapClient
         $signedXml = parent::signDocument($xml);
         $this->logger->debug('XML body has been signed', [
             'originalXml' => $xml,
-            'signedXml' => $signedXml
+            'signedXml' => $signedXml,
         ]);
+
         return $signedXml;
     }
 

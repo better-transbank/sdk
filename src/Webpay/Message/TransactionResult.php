@@ -13,10 +13,8 @@ namespace BetterTransbank\SDK\Webpay\Message;
 
 use BetterTransbank\SDK\Webpay\Message\Enum\ResultCode;
 use DateTimeImmutable;
-use Exception;
 use Iterator;
 use IteratorAggregate;
-use Traversable;
 
 /**
  * Class TransactionResult.
@@ -75,12 +73,12 @@ final class TransactionResult implements IteratorAggregate
     /**
      * TransactionResult constructor.
      *
-     * @param string $identifier
+     * @param string            $identifier
      * @param DateTimeImmutable $transactionDate
      * @param DateTimeImmutable $accountingDate
-     * @param string $redirectionUrl
-     * @param string $authResult
-     * @param CardDetails $cardDetails
+     * @param string            $redirectionUrl
+     * @param string            $authResult
+     * @param CardDetails       $cardDetails
      */
     public function __construct(
         string $identifier,
@@ -101,12 +99,14 @@ final class TransactionResult implements IteratorAggregate
 
     /**
      * @param Detail $detail
+     *
      * @return $this
      */
     public function withAddedDetail(Detail $detail): self
     {
         $cloned = clone $this;
         $cloned->details[] = $detail;
+
         return $cloned;
     }
 
@@ -159,6 +159,7 @@ final class TransactionResult implements IteratorAggregate
         foreach ($this as $detail) {
             $total += $detail->getAmount();
         }
+
         return $total;
     }
 

@@ -1,6 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
+/*
+ * This file is part of the BetterTransbank\SDK project.
+ * (c) Matías Navarro-Carter <mnavarrocarter@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace BetterTransbank\SDK\Soap\WSSE;
 
@@ -10,13 +17,11 @@ use DOMElement;
 use RuntimeException;
 
 /**
- * Class RequestDocument
+ * Class RequestDocument.
  *
  * This class encapsulates an XML with the purposes of implementing WSSE Security in it.
  *
  * It provides an api that makes trivial to execute the signature correctly.
- *
- * @package BetterTransbank\SDK\Soap
  *
  * @internal
  */
@@ -29,6 +34,7 @@ final class RequestDocument extends BaseWSSEDocument
 
     /**
      * RequestDocument constructor.
+     *
      * @param string $xml
      */
     public function __construct(string $xml)
@@ -52,7 +58,7 @@ final class RequestDocument extends BaseWSSEDocument
     }
 
     /**
-     * Marks a node with a wsu:Id attribute
+     * Marks a node with a wsu:Id attribute.
      *
      * @param string $id
      * @param string $xPathNode By default is the body node
@@ -64,7 +70,7 @@ final class RequestDocument extends BaseWSSEDocument
     }
 
     /**
-     * Attaches a reference to ds:SignedInfo for an specific id
+     * Attaches a reference to ds:SignedInfo for an specific id.
      *
      * This method looks for the referenced node id and then attaches the reference,
      * with the node digest.
@@ -134,7 +140,7 @@ final class RequestDocument extends BaseWSSEDocument
     }
 
     /**
-     * Adds the public certificate info to the document
+     * Adds the public certificate info to the document.
      *
      * @param Certificate $certificate
      */

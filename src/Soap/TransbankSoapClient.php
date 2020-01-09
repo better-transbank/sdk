@@ -79,12 +79,15 @@ class TransbankSoapClient extends SoapClient
         $signedXml = $this->signDocument($request);
         $response = parent::__doRequest($signedXml, $location, $action, $version, $one_way);
         $this->verifyDocument($response);
+
         return $response;
     }
 
     /**
      * @param string $xml
+     *
      * @return string
+     *
      * @throws Exception
      */
     protected function signDocument(string $xml): string
@@ -95,6 +98,7 @@ class TransbankSoapClient extends SoapClient
         $document->addSignedInfoReference($id);
         $document->signDocument($this->credentials->privateKey());
         $document->addKeyInfo($this->credentials->publicCert());
+
         return $document->saveXML();
     }
 

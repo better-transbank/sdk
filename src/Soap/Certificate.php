@@ -48,17 +48,17 @@ class Certificate
     /**
      * @param string $data
      * @param string $signature
-     * @param int $algo
+     * @param int    $algo
      */
     public function verifySignature(string $data, string $signature, int $algo = OPENSSL_ALGO_SHA1): void
     {
         $key = openssl_x509_read($this->certificate);
         $result = openssl_verify($data, $signature, $key, $algo);
         openssl_x509_free($key);
-        if ($result === 0) {
+        if (0 === $result) {
             throw new RuntimeException('Invalid signature');
         }
-        if ($result === false || $result === -1) {
+        if (false === $result || -1 === $result) {
             throw new RuntimeException('Error validating signature');
         }
     }

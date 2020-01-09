@@ -1,5 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
+/*
+ * This file is part of the BetterTransbank\SDK project.
+ * (c) Matías Navarro-Carter <mnavarrocarter@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace BetterTransbank\SDK\Soap\WSSE;
 
@@ -10,8 +18,7 @@ use Iterator;
 use RuntimeException;
 
 /**
- * Class BaseWSSEDocument
- * @package BetterTransbank\SDK\Soap\WSSE
+ * Class BaseWSSEDocument.
  */
 abstract class BaseWSSEDocument extends DOMDocument
 {
@@ -38,7 +45,9 @@ abstract class BaseWSSEDocument extends DOMDocument
 
     /**
      * @param string $xPathNode
+     *
      * @return DOMElement
+     *
      * @throws NodeNotFound
      */
     protected function queryElement(string $xPathNode): DOMElement
@@ -47,18 +56,20 @@ abstract class BaseWSSEDocument extends DOMDocument
         if (!$nodes) {
             throw new RuntimeException('Namespace error in finding node');
         }
-        if ($nodes->count() === 0) {
+        if (0 === $nodes->count()) {
             throw new NodeNotFound();
         }
         $node = $nodes->item(0);
         if (!$node instanceof DOMElement) {
             throw new RuntimeException(sprintf('Node to query must be an instance of %s', DOMElement::class));
         }
+
         return $node;
     }
 
     /**
      * @param string $xPathNode
+     *
      * @return Iterator|DOMElement[]
      */
     protected function queryElements(string $xPathNode): Iterator

@@ -1,5 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
+/*
+ * This file is part of the BetterTransbank\SDK project.
+ * (c) Matías Navarro-Carter <mnavarrocarter@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace BetterTransbank\SDK\Soap\WSSE;
 
@@ -7,17 +15,16 @@ use BetterTransbank\SDK\Soap\Certificate;
 use RuntimeException;
 
 /**
- * Class ResponseDocument
+ * Class ResponseDocument.
  *
  * This class encapsulates an XML with the purposes of implementing WSSE Security validation.
  *
- * @package BetterTransbank\SDK\Soap
  * @internal
  */
 final class ResponseDocument extends BaseWSSEDocument
 {
     /**
-     * Verifies the signature of an XML response
+     * Verifies the signature of an XML response.
      *
      * @param Certificate $certificate
      */
@@ -34,7 +41,7 @@ final class ResponseDocument extends BaseWSSEDocument
     private function ensureIsTransbankCertificate(Certificate $certificate): void
     {
         $base = '/soap:Envelope/soap:Header/wsse:Security/ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference/ds:X509Data/ds:X509IssuerSerial';
-        $serialNumberEl = $this->queryElement($base . '/ds:X509SerialNumber');
+        $serialNumberEl = $this->queryElement($base.'/ds:X509SerialNumber');
 
         if ($serialNumberEl->nodeValue !== $certificate->getSerialNumber()) {
             throw new InvalidResponseSignature('Transbank certificate serial number does not match');
@@ -52,12 +59,7 @@ final class ResponseDocument extends BaseWSSEDocument
             $replicatedDigest = base64_encode(sha1($canon, true));
 
             if ($replicatedDigest !== $element->lastChild->nodeValue) {
-                throw new InvalidResponseSignature(sprintf(
-                    'Calculated digest "%s" for node of id %s does not match the value in document "%s"',
-                    $replicatedDigest,
-                    $id,
-                    $element->lastChild->nodeValue
-                ));
+                throw new InvalidResponseSignature(sprintf('Calculated digest "%s" for node of id %s does not match the value in document "%s"', $replicatedDigest, $id, $element->lastChild->nodeValue));
             }
         }
     }

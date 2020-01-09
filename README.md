@@ -3,6 +3,8 @@ Better Transbank SDK
 
 Un SDK no oficial (¡pero mejor!) de los servicios de pago de Transbank.
 
+[![Actions Status](https://github.com/better-transbank/sdk/workflows/CI/badge.svg)](https://github.com/better-transbank/sdk/actions)
+
 ## Instalación
 Puedes instalar este SDK de manera sencilla con composer
 

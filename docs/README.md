@@ -1,3 +1,7 @@
+---
+layout: main
+---
+
 Documentación Better Transbank SDK
 ==================================
 

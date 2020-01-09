@@ -23,7 +23,8 @@ jobs:
       id: composer-cache
       run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-    - uses: actions/cache@v1
+    - name: Load Composer Cache
+      uses: actions/cache@v1
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer
@@ -36,8 +37,8 @@ jobs:
     - name: Test Code Style
       run: composer test:style
 
-    - name: Unit test
+    - name: Test Units
       run: composer test:unit
 
-    - name: Test types
+    - name: Test Types
       run: composer test:types

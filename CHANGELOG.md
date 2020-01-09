@@ -12,6 +12,10 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 ### Added
 - Creada la clase `WSSE\ResponseDocument` que encapsula la validación de una respuesta XML de Transbank.
 
+### Fixed
+- Corregido el objeto `Details` dentro de `TransactionResult`. Ahora, puede contener un arreglo de details.
+Esto soporta Webpay Mall con varias transacciones.
+
 ## [0.2.0] - 2020-01-08
 
 ### Added

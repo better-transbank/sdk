@@ -114,25 +114,34 @@ final class SoapWebpayClient implements WebpayClient
             $envelope->cardDetail->expirationDate ?? null
         );
 
-        $details = new Detail(
-            $envelope->detailOutput->buyOrder,
-            (int) $envelope->detailOutput->amount,
-            $envelope->detailOutput->sharesNumber,
-            $envelope->detailOutput->commerceCode,
-            $envelope->detailOutput->authorizationCode,
-            $envelope->detailOutput->paymentTypeCode,
-            $envelope->detailOutput->responseCode
-        );
-
-        return new TransactionResult(
+        $transactionResult = new TransactionResult(
             $envelope->buyOrder,
             $transDate,
             $accountingDate,
             $envelope->urlRedirection,
             $envelope->VCI,
-            $cardDetails,
-            $details
+            $cardDetails
         );
+
+        $details = $envelope->detailOutput;
+
+        if (is_object($details)) {
+            $details = [$details];
+        }
+
+        foreach ($details as $detail) {
+            $transactionResult = $transactionResult->withAddedDetail(new Detail(
+                $detail->buyOrder,
+                (int) $detail->amount,
+                $detail->sharesNumber,
+                $detail->commerceCode,
+                $detail->authorizationCode,
+                $detail->paymentTypeCode,
+                $detail->responseCode
+            ));
+        }
+
+        return  $transactionResult;
     }
 
     /**

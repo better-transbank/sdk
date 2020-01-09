@@ -13,13 +13,17 @@ namespace BetterTransbank\SDK\Webpay\Message;
 
 use BetterTransbank\SDK\Webpay\Message\Enum\ResultCode;
 use DateTimeImmutable;
+use Exception;
+use Iterator;
+use IteratorAggregate;
+use Traversable;
 
 /**
  * Class TransactionResult.
  *
  * This class models the result of a transaction.
  */
-final class TransactionResult
+final class TransactionResult implements IteratorAggregate
 {
     /**
      * Commerce identifier.
@@ -62,22 +66,21 @@ final class TransactionResult
      */
     private $cardDetails;
     /**
-     * Transaction detail.
+     * Transaction details.
      *
-     * @var Detail
+     * @var Detail[]
      */
-    private $detail;
+    private $details;
 
     /**
      * TransactionResult constructor.
      *
-     * @param string            $identifier
+     * @param string $identifier
      * @param DateTimeImmutable $transactionDate
      * @param DateTimeImmutable $accountingDate
-     * @param string            $redirectionUrl
-     * @param string            $authResult
-     * @param CardDetails       $cardDetails
-     * @param Detail            $detail
+     * @param string $redirectionUrl
+     * @param string $authResult
+     * @param CardDetails $cardDetails
      */
     public function __construct(
         string $identifier,
@@ -85,8 +88,7 @@ final class TransactionResult
         DateTimeImmutable $accountingDate,
         string $redirectionUrl,
         string $authResult,
-        CardDetails $cardDetails,
-        Detail $detail
+        CardDetails $cardDetails
     ) {
         $this->identifier = $identifier;
         $this->transactionDate = $transactionDate;
@@ -94,7 +96,18 @@ final class TransactionResult
         $this->redirectionUrl = $redirectionUrl;
         $this->authResult = $authResult;
         $this->cardDetails = $cardDetails;
-        $this->detail = $detail;
+        $this->details = [];
+    }
+
+    /**
+     * @param Detail $detail
+     * @return $this
+     */
+    public function withAddedDetail(Detail $detail): self
+    {
+        $cloned = clone $this;
+        $cloned->details[] = $detail;
+        return $cloned;
     }
 
     /**
@@ -138,11 +151,15 @@ final class TransactionResult
     }
 
     /**
-     * @return Detail
+     * @return int
      */
-    public function getDetail(): Detail
+    public function getTotalAmount(): int
     {
-        return $this->detail;
+        $total = 0;
+        foreach ($this as $detail) {
+            $total += $detail->getAmount();
+        }
+        return $total;
     }
 
     /**
@@ -153,8 +170,27 @@ final class TransactionResult
         return $this->redirectionUrl;
     }
 
+    /**
+     * @return Detail
+     */
+    public function getFirstDetail(): Detail
+    {
+        return $this->details[0];
+    }
+
+    /**
+     * @return Iterator|Detail[]
+     */
+    public function getIterator(): Iterator
+    {
+        yield from $this->details;
+    }
+
+    /**
+     * @return bool
+     */
     public function isSuccessful(): bool
     {
-        return !ResultCode::isError($this->detail->getResponseCode());
+        return !ResultCode::isError($this->getFirstDetail()->getResponseCode());
     }
 }

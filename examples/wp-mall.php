@@ -11,7 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // This example shows how you can use the sdk in a CGI single-script context.
 // You can run this example with PHP built-in web server:
-// php -S 0.0.0.0:8000 -t examples/ examples/wp-normal.php
+// php -S 0.0.0.0:8000 -t examples/ examples/wp-mall.php
 
 $cred = WebpayCredentials::mallStaging();
 $webpay = SoapWebpayClient::fromCredentials($cred);

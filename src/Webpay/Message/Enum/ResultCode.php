@@ -67,6 +67,6 @@ final class ResultCode
      */
     public static function isError(int $code): bool
     {
-        return self::APPROVED !== $code;
+        return $code !== self::APPROVED;
     }
 }

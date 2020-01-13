@@ -27,11 +27,14 @@ trait ReadableFileTrait
      */
     private function ensureReadableAndOpen(string $filename): string
     {
-        $filename = realpath($filename);
-        if (!is_file($filename) && !is_readable($filename)) {
-            throw new CertificateFileException($filename);
+        $fixedName = realpath($filename);
+        if ($fixedName === false) {
+            $fixedName = $filename;
+        }
+        if (!is_file($fixedName) && !is_readable($fixedName)) {
+            throw new CertificateFileException($fixedName);
         }
 
-        return file_get_contents($filename);
+        return file_get_contents($fixedName);
     }
 }

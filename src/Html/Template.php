@@ -43,7 +43,7 @@ abstract class Template
      */
     protected function render(string $templateName, array $data = []): string
     {
-        if (false === strpos($templateName, '.php')) {
+        if (strpos($templateName, '.php') === false) {
             $templateName .= '.php';
         }
         $filename = sprintf('%s%s%s', $this->templatePath, \DIRECTORY_SEPARATOR, $templateName);

@@ -1,3 +1,0 @@
-Webpay Plus Normal
-==================
-

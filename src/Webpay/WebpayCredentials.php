@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Webpay;
 
+use BetterTransbank\Certificates\Transbank;
+use BetterTransbank\Certificates\Webpay\Plus;
 use BetterTransbank\SDK\Soap\Credentials;
 
 /**
@@ -21,24 +23,15 @@ final class WebpayCredentials extends Credentials
     protected const STAGING_WSDL = 'https://webpay3gint.transbank.cl/WSWebpayTransaction/cxf/WSWebpayService?wsdl';
     protected const PRODUCTION_WSDL = 'https://webpay3g.transbank.cl/WSWebpayTransaction/cxf/WSWebpayService?wsdl';
 
-    protected const NORMAL_STAGING_KEY = __DIR__.'/../../cert/webpay-plus-integration/597020000540.key';
-    protected const NORMAL_STAGING_CERT = __DIR__.'/../../cert/webpay-plus-integration/597020000540.crt';
-
-    protected const MALL_STAGING_KEY = __DIR__.'/../../cert/webpay-plus-mall-integration/597044444401.key';
-    protected const MALL_STAGING_CERT = __DIR__.'/../../cert/webpay-plus-mall-integration/597044444401.crt';
-
-    protected const PATPASS_STAGING_KEY = __DIR__.'/../../cert/webpay-patpass-integration/597044444432.key';
-    protected const PATPASS_STAGING_CERT = __DIR__.'/../../cert/webpay-patpass-integration/597044444432.crt';
-
     /**
      * @return static
      */
     public static function normalStaging(): self
     {
         return self::fromFilesPath(
-            self::NORMAL_STAGING_KEY,
-            self::NORMAL_STAGING_CERT,
-            self::STAGING_TRANSBANK_CERT,
+            Plus\Normal::PRIVATE,
+            Plus\Normal::PUBLIC,
+            Transbank::STAGING,
             self::STAGING_WSDL
         );
     }
@@ -49,9 +42,9 @@ final class WebpayCredentials extends Credentials
     public static function mallStaging(): self
     {
         return self::fromFilesPath(
-            self::MALL_STAGING_KEY,
-            self::MALL_STAGING_CERT,
-            self::STAGING_TRANSBANK_CERT,
+            Plus\Mall::PRIVATE,
+            Plus\Mall::PUBLIC,
+            Transbank::STAGING,
             self::STAGING_WSDL
         );
     }
@@ -62,9 +55,9 @@ final class WebpayCredentials extends Credentials
     public static function patPassStaging(): self
     {
         return self::fromFilesPath(
-            self::PATPASS_STAGING_KEY,
-            self::PATPASS_STAGING_CERT,
-            self::STAGING_TRANSBANK_CERT,
+            Plus\PatPass::PRIVATE,
+            Plus\PatPass::PUBLIC,
+            Transbank::STAGING,
             self::STAGING_WSDL
         );
     }
@@ -80,7 +73,7 @@ final class WebpayCredentials extends Credentials
         return self::fromFilesPath(
             $privateKey,
             $publicCert,
-            self::PRODUCTION_TRANSBANK_CERT,
+            Transbank::PRODUCTION,
             self::PRODUCTION_WSDL
         );
     }

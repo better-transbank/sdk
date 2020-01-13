@@ -55,10 +55,10 @@ class Certificate
         $key = openssl_x509_read($this->certificate);
         $result = openssl_verify($data, $signature, $key, $algo);
         openssl_x509_free($key);
-        if (0 === $result) {
+        if ($result === 0) {
             throw new RuntimeException('Invalid signature');
         }
-        if (-1 === $result) {
+        if ($result === -1) {
             throw new RuntimeException('Error validating signature');
         }
     }
@@ -86,7 +86,7 @@ class Certificate
 
     public function isExpired(): bool
     {
-        return time() > $this->certData['validTo_time_t'];
+        return $this->certData['validTo_time_t'] < time();
     }
 
     /**

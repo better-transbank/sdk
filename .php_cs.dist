@@ -14,6 +14,12 @@ return PhpCsFixer\Config::create()
         'phpdoc_no_empty_return' => true,
         'no_superfluous_phpdoc_tags' => false,
         'header_comment' => ['header' => $header],
+        'yoda_style' => [
+            'equal' => false,
+            'identical' => false,
+            'less_and_greater' => false,
+            'always_move_variable' => true
+        ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

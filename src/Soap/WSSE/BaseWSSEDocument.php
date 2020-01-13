@@ -57,7 +57,7 @@ abstract class BaseWSSEDocument extends DOMDocument
         if (!$nodes) {
             throw new RuntimeException('Namespace error in finding node');
         }
-        if (0 === $nodes->count()) {
+        if ($nodes->count() === 0) {
             throw new NodeNotFound();
         }
         $node = $nodes->item(0);

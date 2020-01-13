@@ -64,7 +64,7 @@ final class ResponseDocument extends BaseWSSEDocument
             $digestValue = null;
             foreach ($element->childNodes as $node) {
                 /** @var DOMNode $node */
-                if ('ds:DigestValue' === $node->nodeName) {
+                if ($node->nodeName === 'ds:DigestValue') {
                     $digestValue = $node->nodeValue;
                     break;
                 }

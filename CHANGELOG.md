@@ -6,9 +6,16 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## Modified
+- Se quitaron los repositorios de certificados y se centralizaron en `better-transbank/certificates`.
+- Se quitó el CI de la rama master, debido a que es redundante
+- Se quitó la documentación porque será colocada en su propio repositorio `better-transbank/docs`
+- Quitadas las comparaciones con estilo Yoda
+
 ## Added
 - Integración Continua de cambios en código, con pruebas unitarias y manejo de estilo
-- Psalm fue añadido al pipeline y ya no muestra errores de tipado en el código 
+- Psalm fue añadido al pipeline y ya no muestra errores de tipado en el código
+- Dependencia a `better-transbank/certificates` como repositorio de certificados
 
 ## [0.3.0] - 2020-01-09 
 

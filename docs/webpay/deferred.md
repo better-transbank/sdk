@@ -1,2 +1,0 @@
-Webpay con Captura Diferida
-===========================

@@ -16,9 +16,6 @@ namespace BetterTransbank\SDK\Soap;
  */
 class Credentials
 {
-    protected const PRODUCTION_TRANSBANK_CERT = __DIR__.'/../../cert/transbank-production.pem';
-    protected const STAGING_TRANSBANK_CERT = __DIR__.'/../../cert/transbank.pem';
-
     /**
      * @var PrivateKey
      */

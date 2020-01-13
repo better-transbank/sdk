@@ -1,2 +1,0 @@
-Recibiendo Pagos por Transbank
-==============================

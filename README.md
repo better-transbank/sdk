@@ -73,7 +73,8 @@ desde cero.
 - [ ] OnePay
 
 ## Documentación
-Puedes leer la documentación detallada [aquí](docs/README.md)
+Esta libreria dispone de una [documentación detallada] que puedes consultar para conocer la librería
+en profundidad.
 
 ## Contribuye
 Puedes leer la guía para contribuir a este repositorio, en donde se explica cómo contribuir con código o reportando issues.
@@ -82,3 +83,4 @@ Además, si esta librería o alguna otra de las que he desarrollado te ha servid
 puedes comprame una cervecita o un café por Github Sponsors.
 
 [la entrada de mi blog]: https://mnavarro.dev/2020/a-brand-new-transbank-sdk/
+[documentación detallada]: https://better-transbank.mnavarro.dev

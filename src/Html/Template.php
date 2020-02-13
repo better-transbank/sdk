@@ -18,7 +18,7 @@ use RuntimeException;
  */
 abstract class Template
 {
-    private const DEFAULT_PATH = __DIR__.'/../../template';
+    private const DEFAULT_PATH = TEMPLATE_PATH;
 
     /**
      * @var string

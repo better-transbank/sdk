@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
 
+use BetterTransbank\SDK\Config;
 use BetterTransbank\SDK\Html\PaymentForm;
-use BetterTransbank\SDK\Html\VoucherView;
-use BetterTransbank\SDK\Webpay\Message\SubscriptionInfo;
-use BetterTransbank\SDK\Webpay\Message\Transaction;
-use BetterTransbank\SDK\Webpay\SoapWebpayClient;
-use BetterTransbank\SDK\Webpay\WebpayCredentials;
+use BetterTransbank\SDK\Html\RedirectView;
+use BetterTransbank\SDK\Services\WebpayPlus\Customer;
+use BetterTransbank\SDK\Services\WebpayPlus\Subscription;
+use BetterTransbank\SDK\Services\WebpayPlus\Transaction;
+use BetterTransbank\SDK\TestingCredentials;
+use BetterTransbank\SDK\Transbank;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -14,36 +16,48 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // You can run this example with PHP built-in web server:
 // php -S 0.0.0.0:8000 -t examples/ examples/wp-patpass.php
 
-$cred = WebpayCredentials::patPassStaging();
-$webpay = SoapWebpayClient::fromCredentials($cred);
+$config = Config::fromCredentials(TestingCredentials::forWebpayPlusSubscription());
+$transbank = Transbank::create($config);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $subInfo = new SubscriptionInfo(
-        'service',
-        '11.111.111-5',
+
+
+    $customer = Customer::register(
+        '11.111.111-2',
         'Juanito',
         'Pérez',
-        'López',
-        'juanito@example.com',
-        '12345678',
-        new DateTimeImmutable('2020-07-12'),
-        'pagos@tienda.cl'
+        'González',
+        'jpergon@example.com',
+        '123456789'
     );
-    $transaction = Transaction::create('http://localhost:8000/return', 'http://localhost:8000/final')
-        ->makeTypePatPass($subInfo)
-        ->withAddedDetails('Order123', 10000, $cred->publicCert()->getSubjectCN());
-    $response = $webpay->startTransaction($transaction);
-    PaymentForm::prepare($response)->send();
+
+    $subscription = Subscription::define(
+        '12345',
+        10000,
+        '124214125',
+        new DateTime('+1 year')
+    );
+
+    $transaction = Transaction::subscription(
+        $subscription,
+        $customer,
+        'commerce@example.com',
+        'http://localhost:8000/return',
+        'http://localhost:8000/final'
+    );
+
+    $result = $transbank->webpayPlus()->register($transaction);
+    PaymentForm::prepare($result)->send();
     exit;
 }
 
 if ($_SERVER['REQUEST_URI'] === '/return') {
     $token = $_REQUEST['token_ws'];
-    $result = $webpay->getTransactionResult($token);
+    $transactionInfo = $transbank->webpayPlus()->info($token);
     if ($result->isSuccessful()) {
-        $webpay->confirmTransaction($token);
+        $transbank->webpayPlus()->confirm($token);
     }
-    VoucherView::prepare($result, $token)->send();
+    RedirectView::prepare($result, $token)->send();
     exit;
 }
 

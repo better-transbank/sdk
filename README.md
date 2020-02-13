@@ -12,30 +12,34 @@ Puedes instalar este SDK de manera sencilla con composer
 composer require better-transbank/sdk
 ```
 
-> **NOTA:** Esta librería usa versionamiento semántico, por lo que garantizamos no romper la api en versiones minor y patch.
+> **PROMESA DE ESTABILIDAD**:
+> 
+> Esta librería adhiere a [versionamiento semántico](https://semver.org/lang/es/) por lo
+> que prometemos mantener la estabilidad de la api en versiones minor y patch desde
+> `1.0.0` en adelante.
 
 ## Inicio Rápido
-Crear un pago en Webpay Plus para desarrollo y emitir una respuesta es extremadamente sencillo:
+Crear una transacción normal y mostrar el formulario de pago de WebpayPlus es extremadamente sencillo:
 
 ```php
+use BetterTransbank\SDK\Config;
 use BetterTransbank\SDK\Html\PaymentForm;
-use BetterTransbank\SDK\Webpay\SoapWebpayClient;
-use BetterTransbank\SDK\Webpay\WebpayCredentials;
-use BetterTransbank\SDK\Webpay\Message\Transaction;
+use BetterTransbank\SDK\Services\WebpayPlus\Transaction;
+use BetterTransbank\SDK\TestingCredentials;
+use BetterTransbank\SDK\Transbank;
 
-// Creamos el cliente de Webpay con credenciales para staging
-$cred = WebpayCredentials::normalStaging();
-$webpay = SoapWebpayClient::fromCredentials($cred);
+$config = Config::fromCredentials(TestingCredentials::forWebpayPlusNormal());
+$transbank = Transbank::create($config);
 
-// Creamos el objeto Transaction, que representa una transacción a realizarse en webpay
-$transaction = Transaction::create('https://the.url/return', 'https://the.url/final')
-    ->withAddedDetails('12345', 10000, $cred->publicCert()->getSubjectCN());
+$transaction = Transaction::normal(
+    '12345',
+    10000,
+    'http://localhost:8000/return',
+    'http://localhost:8000/final'
+);
 
-// Enviamos la transacción a través del cliente
-$response = $webpay->startTransaction($transaction);
-
-// Renderizamos el formulario de pago con la respuesta
-PaymentForm::prepare($response)->send();
+$result = $transbank->webpayPlus()->register($transaction);
+PaymentForm::prepare($result)->send();
 ```
 
 > **NOTA:** Evita usar el método `PaymentForm::send()` ya que presupone que usas PHP con CGI y
@@ -65,12 +69,10 @@ donde también explico todo el proceso de desarrollo en detalle.
 con un poco de funcionalidad extra sobre la misma lógica del SDK oficial. Esta, en cambio, es una implementación
 desde cero.
 
-## Productos Implementados
-- [x] Webpay Plus (Normal, Mall y PatPass)
-- [ ] Webpay Plus Captura Diferida
-- [ ] Webpay Plus Anulación
-- [ ] Webpay OneClick (Normal y Mall)
-- [ ] OnePay
+## Servicios de Transbank Implementados
+- [x] Webpay Plus (Transacciones Normales, Mútiples y de Subscripción)
+- [x] Commerce Integration (Captura Diferida y Anulación)
+- [ ] Webpay OneClick
 
 ## Documentación
 Esta libreria dispone de una [documentación detallada] que puedes consultar para conocer la librería

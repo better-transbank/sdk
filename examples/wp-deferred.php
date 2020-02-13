@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-use BetterTransbank\Certificates\Webpay;
 use BetterTransbank\SDK\Config;
 use BetterTransbank\SDK\Html\PaymentForm;
 use BetterTransbank\SDK\Html\RedirectView;
+use BetterTransbank\SDK\Services\WebpayCommerce\CaptureOrder;
+use BetterTransbank\SDK\Services\WebpayCommerce\NullifyOrder;
 use BetterTransbank\SDK\Services\WebpayPlus\SingleTransactionInfo;
 use BetterTransbank\SDK\Services\WebpayPlus\Transaction;
 use BetterTransbank\SDK\TestingCredentials;
@@ -14,18 +15,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // This example shows how you can use the sdk in a CGI single-script context.
 // You can run this example with PHP built-in web server:
-// php -S 0.0.0.0:8000 -t examples/ examples/wp-normal.php
+// php -S 0.0.0.0:8000 -t examples/ examples/wp-deferred.php
 
-// If we don't pass anything to the config method, it will assume we are in dev env
-// and inject the right certificates.
+$orderId = 'Ll0IveVyddZXEFLDXGRgWQ==';
 
-$config = Config::fromCredentials(TestingCredentials::forWebpayPlusNormal());
+$config = Config::fromCredentials(TestingCredentials::forWebpayCommerce());
 $transbank = Transbank::create($config);
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_SERVER['REQUEST_URI'] === '/') {
 
     $transaction = Transaction::normal(
-        '12345',
+        $orderId,
         10000,
         'http://localhost:8000/return',
         'http://localhost:8000/final'
@@ -53,6 +53,31 @@ if ($_SERVER['REQUEST_URI'] === '/return') {
 }
 
 if ($_SERVER['REQUEST_URI'] === '/final') {
-    echo 'Transaction OK';
+
+    sleep(10);
+
+    $result = $transbank->webpayCommerce()->capture(new CaptureOrder(
+        '1213',
+        $orderId,
+        10000
+    ));
+
+    echo 'Transaction has been captured. Now nullifying...';
+    http_response_code(302);
+    header('Location: http://localhost:8000/nullify');
+    exit;
+}
+
+if ($_SERVER['REQUEST_URI'] === '/nullify') {
+
+    sleep(10);
+
+    $result = $transbank->webpayCommerce()->nullify(new NullifyOrder(
+        '1213',
+        $orderId,
+        10000
+    ));
+
+    echo 'Transaction has been nullified';
     exit;
 }

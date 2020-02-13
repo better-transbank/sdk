@@ -7,12 +7,16 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 ## [Unreleased]
 
 ## Modified
+- Modificada la clase transacción y la api del servicio de Webpay Plus.
+- Se cambiaron namespaces de casi todas las clases y servicios
 - Se quitaron los repositorios de certificados y se centralizaron en `better-transbank/certificates`.
 - Se quitó el CI de la rama master, debido a que es redundante
 - Se quitó la documentación porque será colocada en su propio repositorio `better-transbank/docs`
 - Quitadas las comparaciones con estilo Yoda
 
 ## Added
+- Agregado comando de consola para generar certificados usando `oo-php/openssl`
+- Agregado soporte para servicio Webpay Commerce
 - Integración Continua de cambios en código, con pruebas unitarias y manejo de estilo
 - Psalm fue añadido al pipeline y ya no muestra errores de tipado en el código
 - Dependencia a `better-transbank/certificates` como repositorio de certificados

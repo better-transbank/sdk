@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+use BetterTransbank\SDK\Cli\CertificateInitCommand;
+use Symfony\Component\Console\Application;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$app = new Application('Transbank SDK Cli', '1.0.0');
+
+$app->addCommands([
+    new CertificateInitCommand()
+]);
+
+$app->run();

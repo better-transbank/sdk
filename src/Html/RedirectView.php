@@ -11,46 +11,49 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Html;
 
-use BetterTransbank\SDK\Services\WebpayPlus\RegisterTransactionResult;
+use BetterTransbank\SDK\Services\WebpayPlus\TransactionInfo;
 
 /**
- * Class PaymentForm.
+ * Class VoucherView.
  */
-class PaymentForm extends Template
+class RedirectView extends Template
 {
     /**
-     * @var RegisterTransactionResult
+     * @var TransactionInfo
      */
-    private $result;
+    private $info;
 
     /**
-     * @param RegisterTransactionResult $result
+     * @param TransactionInfo $info
      *
      * @return Template
      */
-    public static function prepare(RegisterTransactionResult $result): Template
+    public static function prepare(TransactionInfo $info): Template
     {
-        return new self($result);
+        return new self($info);
     }
 
     /**
-     * PaymentForm constructor.
+     * VoucherView constructor.
      *
-     * @param RegisterTransactionResult $result
+     * @param TransactionInfo $info
      */
-    public function __construct(RegisterTransactionResult $result)
+    public function __construct(TransactionInfo $info)
     {
-        $this->result = $result;
+        $this->info = $info;
         parent::__construct();
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         try {
             return $this->render('redirect-form', [
                 'rand' => bin2hex(random_bytes(8)),
-                'token' => $this->result->getToken(),
-                'url' => $this->result->getUrl(),
+                'url' => $this->info->getRedirectionUrl(),
+                'token' => $this->info->getToken(),
             ]);
         } catch (\Exception $e) {
             throw new \RuntimeException('Not enough entropy');

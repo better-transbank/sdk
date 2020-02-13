@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Soap\WSSE;
 
-use BetterTransbank\SDK\Soap\Certificate;
+use BetterTransbank\SDK\Soap\Credentials\Certificate;
 use DOMNode;
 use RuntimeException;
 
@@ -43,7 +43,6 @@ final class ResponseDocument extends BaseWSSEDocument
     {
         $base = '/soap:Envelope/soap:Header/wsse:Security/ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference/ds:X509Data/ds:X509IssuerSerial';
         $serialNumberEl = $this->queryElement($base.'/ds:X509SerialNumber');
-
         if ($serialNumberEl->nodeValue !== $certificate->getSerialNumber()) {
             throw new InvalidResponseSignature('Transbank certificate serial number does not match');
         }

@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
+use BetterTransbank\SDK\Config;
 use BetterTransbank\SDK\Html\PaymentForm;
-use BetterTransbank\SDK\Html\VoucherView;
-use BetterTransbank\SDK\Webpay\Message\Transaction;
-use BetterTransbank\SDK\Webpay\SoapWebpayClient;
-use BetterTransbank\SDK\Webpay\WebpayCredentials;
+use BetterTransbank\SDK\Html\RedirectView;
+use BetterTransbank\SDK\Services\WebpayPlus\MultipleTransactionInfo;
+use BetterTransbank\SDK\Services\WebpayPlus\Transaction;
+use BetterTransbank\SDK\TestingCredentials;
+use BetterTransbank\SDK\Transbank;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -13,32 +15,32 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // You can run this example with PHP built-in web server:
 // php -S 0.0.0.0:8000 -t examples/ examples/wp-mall.php
 
-$cred = WebpayCredentials::mallStaging();
-$webpay = SoapWebpayClient::fromCredentials($cred);
+$config = Config::fromCredentials(TestingCredentials::forWebpayPlusMultiple());
+$transbank = Transbank::create($config);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Los codigos de comercio de WebpayMall los puedes ver aquí:
-    // https://www.transbankdevelopers.cl/documentacion/como_empezar#ambientes
-    $transaction = Transaction::create('http://localhost:8000/return', 'http://localhost:8000/final')
-        ->makeTypeMall('597044444401', 'MainOrder1234')
-        ->withAddedDetails('SubOrder1', 10000, '597044444402')
-        ->withAddedDetails('SubOrder2', 14000, '597044444403');
-    $response = $webpay->startTransaction($transaction);
-    PaymentForm::prepare($response)->send();
+
+    $transaction = Transaction::multiple('12345','http://localhost:8000/return','http://localhost:8000/final')
+        ->withAddedTransaction('trans-2', '597044444402', 3000)
+        ->withAddedTransaction('trans-2', '597044444403', 23401);
+
+    $result = $transbank->webpayPlus()->register($transaction);
+    PaymentForm::prepare($result)->send();
     exit;
 }
 
 if ($_SERVER['REQUEST_URI'] === '/return') {
     $token = $_REQUEST['token_ws'];
-    $result = $webpay->getTransactionResult($token);
-    if ($result->isSuccessful()) {
-        $webpay->confirmTransaction($token);
-    }
-    VoucherView::prepare($result, $token)->send();
-    exit;
-}
+    $transactionInfo = $transbank->webpayPlus()->info($token);
 
-if ($_SERVER['REQUEST_URI'] === '/final') {
-    echo 'Transaction OK';
+    if (!$transactionInfo instanceof MultipleTransactionInfo) {
+        throw new RuntimeException('Invalid transaction class');
+    }
+
+    if ($transactionInfo->areAllSuccessful() && $transactionInfo->getTotalAmount() === 26401) {
+        $transbank->webpayPlus()->confirm($transactionInfo->getToken());
+    }
+
+    RedirectView::prepare($transactionInfo)->send();
     exit;
 }

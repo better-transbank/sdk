@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace BetterTransbank\SDK\Soap\WSSE;
 
-use BetterTransbank\SDK\Soap\Certificate;
-use BetterTransbank\SDK\Soap\PrivateKey;
+use BetterTransbank\SDK\Soap\Credentials\Certificate;
+use BetterTransbank\SDK\Soap\Credentials\PrivateKey;
 use DOMElement;
 use DOMNode;
 use RuntimeException;

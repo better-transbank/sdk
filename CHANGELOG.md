@@ -6,6 +6,8 @@ y este proyecto adhiere a [Versionamiento Semántico](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [0.4.0] - 2020-06-07
+
 ## Modified
 - Modificada la clase transacción y la api del servicio de Webpay Plus.
 - Se cambiaron namespaces de casi todas las clases y servicios
@@ -61,7 +63,8 @@ ahorrar I/O en las operaciones.
 - Añadido el cliente SOAP con Logger
 - Añadido Webpay decorado con Event Dispatcher
  
-[Unreleased]: https://github.com/better-transbank/sdk/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/better-transbank/sdk/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/better-transbank/sdk/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/better-transbank/sdk/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/better-transbank/sdk/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/better-transbank/sdk/compare/releases/tag/0.1.0
